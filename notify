@@ -1,0 +1,46 @@
+#!/bin/bash
+
+usage_exit() {
+    echo "Usage: with-alert \"any command which takes some time\" [-c channel-for-alert] [-p message-prefix]"
+    exit -1
+}
+
+CHANNEL=alert
+MSG_PREX="computation"
+
+while getopts c:p:h OPT
+do
+    case $OPT in
+        c) CHANNEL=$OPTARG
+           ;;
+        p) MSG_PREX=$OPTARG
+           ;;
+        h) usage_exit
+           ;;
+        \?) usage_exit
+           ;;
+    esac
+done
+
+
+# check for slack-cli
+which slack-cl
+if [[ $? -ne 0 ]]; then
+    echo "slack-cli (https://github.com/matthewlujp/slack-cmd-client) is required. Go to the github page and follow the instructions to install it."
+    exit -1
+fi
+
+
+tmpfile=$(mktemp)
+eval $1" 2>"$tmpfile
+
+if [[ $? -eq o ]]; then
+    echo "$MSG_PREX success!"
+    slack-cli message $CHANNEL "$MSG_PREX completed successfully"
+else
+    echo "$MSG_PREX failed!: "$(cat $tmpfile)
+    slack-cli message $CHANNEL "$MSG_PREX failed and crashed"
+    slack-cli upload $CHANNEL $tmpfile -t "error log"
+fi
+  
+rm $tmpfile
