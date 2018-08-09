@@ -31,6 +31,10 @@ if [[ $? -ne 0 ]]; then
 fi
 
 
+if [[ $1 = "" ]]; then
+  usage_exit
+fi
+
 tmpfile=$(mktemp)
 eval $1" 2>"$tmpfile
 
