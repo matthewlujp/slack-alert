@@ -24,7 +24,7 @@ done
 
 
 # check for slack-cli
-which slack-cl
+which slack-cli
 if [[ $? -ne 0 ]]; then
     echo "slack-cli (https://github.com/matthewlujp/slack-cmd-client) is required. Go to the github page and follow the instructions to install it."
     exit -1
