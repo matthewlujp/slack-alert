@@ -21,6 +21,7 @@ do
            ;;
     esac
 done
+shift $((OPTIND - 1))
 
 
 # check for slack-cli
